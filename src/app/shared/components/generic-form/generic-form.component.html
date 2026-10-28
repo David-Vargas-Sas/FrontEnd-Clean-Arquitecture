@@ -1,0 +1,14 @@
+<form [id]="formId" class="editor-form" [formGroup]="form" (ngSubmit)="submit()">
+@if (error) { <p class="alert error" role="alert">{{ error }}</p> }
+@if (loading) { <p class="notice" role="status">Cargando opciones disponibles…</p> }
+<div class="grid grid-cols-1 gap-5 sm:grid-cols-2">@for (field of fields; track field.key) {
+<div class="form-field" [class.full-width]="field.type === 'textarea' || field.type === 'password'"><label [for]="'field-' + field.key">{{ field.label }}@if (field.required || field.requiredOnCreate && mode === 'create') { <span class="required"> *</span> }</label>
+@if (field.type === 'select') { <select [id]="'field-' + field.key" [formControlName]="field.key" [attr.aria-invalid]="!!fieldError(field)" [attr.aria-describedby]="'help-' + field.key"><option value="">Selecciona una opción</option>@for (option of fieldOptions(field); track option.id) { <option [value]="option.id" [disabled]="option.activo === false">{{ option.label }}{{ option.stock !== undefined ? ' · Stock: ' + option.stock : '' }}{{ option.activo === false ? ' (inactivo)' : '' }}</option> }</select> }
+@else if (field.type === 'textarea') { <textarea [id]="'field-' + field.key" [formControlName]="field.key" rows="3" [attr.maxlength]="field.maxLength" [attr.aria-invalid]="!!fieldError(field)" [attr.aria-describedby]="'help-' + field.key"></textarea> }
+@else if (field.type === 'money') { <div class="money-input"><span aria-hidden="true">$</span><input appCurrency type="text" inputmode="decimal" [id]="'field-' + field.key" [formControlName]="field.key" placeholder="0,00" autocomplete="off" [attr.aria-invalid]="!!fieldError(field)" [attr.aria-describedby]="'help-' + field.key + ' currency-' + field.key"/><span [id]="'currency-' + field.key" class="currency-code">COP</span></div> }
+@else { <input [id]="'field-' + field.key" [type]="field.type" [formControlName]="field.key" [attr.min]="field.min" [attr.max]="field.max" [attr.step]="field.step" [attr.maxlength]="field.maxLength" [attr.autocomplete]="field.type === 'password' ? 'new-password' : 'off'" [attr.aria-invalid]="!!fieldError(field)" [attr.aria-describedby]="'help-' + field.key"/> }
+<div [id]="'help-' + field.key">@if (field.hint) { <small class="field-hint">{{ field.hint }}</small> }@if (fieldError(field)) { <small class="field-error">{{ fieldError(field) }}</small> }</div>
+</div>
+}</div>
+@if (showActions) { <div class="modal-footer"><button type="button" class="button secondary" [disabled]="saving" (click)="cancelled.emit()">Cancelar</button><button class="button primary" type="submit" [disabled]="saving || loading || blocked">{{ saving ? 'Guardando…' : submitLabel }}</button></div> }
+</form>

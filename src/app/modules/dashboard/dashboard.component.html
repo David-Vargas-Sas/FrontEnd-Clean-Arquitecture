@@ -1,0 +1,12 @@
+<div class="page-heading"><div><span class="eyebrow">VISTA GENERAL</span><h1>Hola, {{ auth.user()?.nombre }}<span class="heading-dot">.</span></h1><p>Todo listo para una nueva jornada de trabajo.</p></div><span class="badge neutral">Tu espacio de trabajo</span></div>
+<section class="welcome-banner"><div><span class="eyebrow light">CADA OPERACIÓN CUENTA</span><h2>Más control.<br>Mejores decisiones.</h2><p>Mantén tus productos al día y lleva el seguimiento de cada movimiento.</p><a routerLink="/productos" class="button white">Ver productos<app-icon name="arrow"/></a></div><div class="banner-art" aria-hidden="true"><div class="art-ring"></div><div class="art-box"><app-icon name="box"/></div><span class="art-label">TODO CONECTADO ↗</span></div></section>
+@if (error()) { <p class="alert error" role="alert">{{ error() }}</p> }
+@if (auth.can('productos:read')) {
+<div class="section-heading"><div><h2>Un vistazo al catálogo</h2><p>Resumen de los primeros 10 productos de la consulta.</p></div><a routerLink="/productos" class="text-link">Ver catálogo →</a></div>
+<div class="stats-grid"><article class="stat-card"><span class="stat-icon"><app-icon name="box"/></span><span>Productos consultados</span><strong>{{ loading() ? '—' : products().length }}</strong><small>En esta consulta</small></article><article class="stat-card"><span class="stat-icon purple"><app-icon name="inventory"/></span><span>Unidades disponibles</span><strong>{{ loading() ? '—' : units }}</strong><small>Suma del stock consultado</small></article><article class="stat-card"><span class="stat-icon magenta"><app-icon name="history"/></span><span>Sin existencias</span><strong>{{ loading() ? '—' : withoutStock }}</strong><small>Productos de esta consulta</small></article></div>
+}
+<div class="section-heading"><div><h2>Accesos rápidos</h2><p>Las herramientas disponibles para tu rol.</p></div></div><div class="quick-grid">
+@if (auth.can('ventas:create')) { <a routerLink="/ventas" class="quick-card"><app-icon name="sale"/><div><h3>Gestionar ventas</h3><p>Registra una venta y consulta su estado.</p></div><app-icon name="arrow"/></a> }
+@if (auth.can('inventario:create')) { <a routerLink="/inventario" class="quick-card"><app-icon name="inventory"/><div><h3>Mover inventario</h3><p>Registra entradas y salidas justificadas.</p></div><app-icon name="arrow"/></a> }
+@if (auth.can('usuarios:read')) { <a routerLink="/usuarios" class="quick-card"><app-icon name="users"/><div><h3>Administrar equipo</h3><p>Gestiona cuentas, acceso y permisos.</p></div><app-icon name="arrow"/></a> }
+</div>

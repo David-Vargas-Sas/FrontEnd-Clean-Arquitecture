@@ -1,0 +1,18 @@
+@import "tailwindcss";
+@source "./app";
+
+/* Inspirado en la referencia visual de Colserauto proporcionada para la prueba. */
+@theme static {
+  --font-sans: "Segoe UI", Arial, sans-serif;
+  --color-autos-ink: #193d77;
+  --color-autos-ink-strong: #132b52;
+  --color-autos-accent: #a42a87;
+  --color-autos-accent-hover: #88216f;
+  --color-autos-purple: #3b2c73;
+  --color-autos-muted: #59667c;
+  --color-autos-text: #26354f;
+  --color-autos-surface: #f6f7fb;
+  --color-autos-line: #e2e6f0;
+  --color-autos-soft: #f5eaf3;
+  --color-autos-on-dark: #dce5fa;
+}

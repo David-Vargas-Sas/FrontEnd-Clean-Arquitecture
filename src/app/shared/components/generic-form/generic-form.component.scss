@@ -1,0 +1,6 @@
+:host{display:block}
+
+.money-input { position: relative; display: flex; align-items: center; }
+.money-input > span { position: absolute; left: 12px; color: var(--muted); font-size: 13px; pointer-events: none; }
+.money-input input { padding-inline: 30px 52px; font-variant-numeric: tabular-nums; }
+.money-input .currency-code { left: auto; right: 12px; font-size: 10px; font-weight: 600; }

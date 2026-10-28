@@ -1,0 +1,11 @@
+<div class="row-actions">
+@for (action of visibleActions; track action.event) {
+  <button type="button" class="row-action" [class.action-danger]="action.danger || action.event === 'delete' || action.event === 'cancel'"
+    [class.action-deactivate]="action.event === 'status' && row['activo']" [class.action-activate]="action.event === 'status' && !row['activo']"
+    [title]="label(action)" [attr.aria-label]="action.ariaLabel ? action.ariaLabel(row) : label(action)"
+    (click)="actionTriggered.emit({event: action.event, row})">
+    <app-icon [name]="action.icon || (action.event === 'status' ? 'power' : action.event === 'delete' ? 'trash' : action.event === 'cancel' ? 'close' : 'search')"/>
+    <span>{{ label(action) }}</span>
+  </button>
+}
+</div>

@@ -1,0 +1,33 @@
+<div class="page-heading"><div><span class="eyebrow">OPERACIONES / {{ config.title }}</span><h1>{{ config.title }}<span class="heading-dot">.</span></h1><p>{{ config.description }}</p></div>
+@if (config.createPermission && auth.can(config.createPermission)) { <app-create-button [label]="config.key === 'inventario' ? 'Registrar movimiento' : 'Crear ' + config.singular" (create)="openEditor()"/> }</div>
+@if (error()) { <p class="alert error" role="alert">{{ error() }}</p> }
+@if (config.key === 'inventario') { <div class="info-banner"><app-icon name="inventory"/><p>Las entradas aumentan el stock y las salidas lo reducen. Cada movimiento conserva su motivo y responsable.</p></div> }
+<app-data-table-wrapper [title]="config.key === 'auditoria' ? 'Historial de cambios' : 'Listado de ' + config.title.toLowerCase()" [icon]="config.icon"
+  [data]="rows()" [columns]="config.columns" [rowActions]="actions()" [options]="options()" [loading]="loading()" [error]="!!error()" [offset]="offset()" [hasNext]="hasNext()"
+  (refresh)="refresh()" (pageChange)="page($event)" (rowActionTriggered)="onRowAction($event)">
+@if (config.filters?.length) { <form table-filters class="filters" [formGroup]="filters" (ngSubmit)="applyFilters()">
+@for (field of config.filters; track field.key) { <div><label [for]="'filter-' + field.key">{{ field.label }}</label>
+@if (field.type === 'select') { <select [id]="'filter-' + field.key" [formControlName]="field.key"><option value="">Todos</option>@for (option of fieldOptions(field); track option.id) { <option [value]="option.id">{{ option.label }}</option> }</select> }
+@else { <input [id]="'filter-' + field.key" [type]="field.type" [attr.min]="field.min" [attr.maxlength]="field.maxLength" [formControlName]="field.key"/> }</div> }
+<button class="button secondary small" type="submit" [disabled]="loading()">Filtrar</button><button class="button subtle small" type="button" [disabled]="loading()" (click)="clearFilters()">Limpiar filtros</button></form> }
+</app-data-table-wrapper>
+@if (editor(); as mode) {
+<app-modal [title]="(mode === 'create' ? 'Crear ' : 'Editar ') + config.singular" [subtitle]="config.key === 'ventas' ? 'El stock se actualiza al guardar la venta.' : 'Completa los datos para continuar.'" (closed)="closeEditor()">
+<app-generic-form #editorForm [showActions]="false" [fields]="config.fields" [mode]="mode" [initialData]="selected()" [options]="options()" [saving]="saving()" [loading]="lookupsLoading()" [blocked]="lookupError() || !!saleSummary?.exceeded" [externalErrors]="saleSummary?.exceeded ? { cantidad: 'La cantidad supera las existencias disponibles.' } : {}"
+  [error]="modalError() || (lookupError() ? 'No se pudieron cargar las opciones. Cierra esta ventana y vuelve a intentarlo.' : '')" [submitLabel]="'Guardar ' + config.singular"
+  (submitted)="save($event)" (cancelled)="closeEditor()" (fieldChanged)="fieldChanged.emit($event)"/>
+<div class="editor-extra">
+@if (saleSummary; as sale) { <section class="sale-summary" aria-label="Resumen de la venta" aria-live="polite"><h3>Resumen de la venta</h3><p>{{ sale.product }}</p><dl><div><dt>Disponibles para esta venta</dt><dd>{{ sale.selected ? sale.available : '—' }} uds.</dd></div><div><dt>Precio por unidad</dt><dd>{{ money(sale.price || 0) }}</dd></div><div><dt>Cantidad</dt><dd>{{ sale.quantity || 0 }}</dd></div><div class="sale-total"><dt>Total</dt><dd>{{ money(sale.total) }}</dd></div></dl>@if (sale.exceeded) { <p class="field-error" role="alert">La cantidad supera las existencias disponibles. Reduce la cantidad para continuar.</p> }<small>El stock definitivo se valida al guardar.</small></section> }
+@if (discardPrompt()) { <section #discardNotice class="discard-notice" role="alert" tabindex="-1"><h3>Tienes cambios sin guardar</h3><p>Si cierras este formulario, perderás los cambios realizados.</p><div><button type="button" class="button secondary small" (click)="discardPrompt.set(false)">Seguir editando</button><button type="button" class="button danger small" (click)="discardEditor()">Descartar cambios</button></div></section> }
+</div>
+<div modal-actions class="modal-footer"><button type="button" class="button secondary" [disabled]="saving()" (click)="closeEditor()">Cancelar</button><button class="button primary" type="submit" [attr.form]="editorForm.formId" [disabled]="saving() || lookupsLoading() || lookupError() || !!saleSummary?.exceeded">{{ saving() ? 'Guardando…' : 'Guardar ' + config.singular }}</button></div>
+</app-modal>
+}
+@if (confirmation()) { <app-modal [title]="confirmation() === 'cancel' ? 'Anular venta' : confirmation() === 'delete' ? 'Eliminar ' + config.singular : (selected()?.['activo'] ? 'Desactivar ' : 'Activar ') + config.singular" (closed)="closeConfirmation()"><div class="confirmation-content">
+@if (modalError()) { <p class="alert error" role="alert">{{ modalError() }}</p> }
+<p>Vas a {{ confirmation() === 'cancel' ? 'anular' : confirmation() === 'delete' ? 'eliminar' : selected()?.['activo'] ? 'desactivar' : 'activar' }} <strong>{{ recordName() }}</strong>.</p>
+@if (confirmation() === 'cancel') { <p class="muted">La venta se conservará y el stock correspondiente se devolverá una sola vez.</p><label for="cancel-reason">Motivo de la anulación *</label><textarea [attr.aria-invalid]="reason.touched && (!reason.value.trim() || reason.invalid)" aria-describedby="cancel-reason-help" id="cancel-reason" [formControl]="reason" maxlength="500" rows="3"></textarea>@if (reason.touched && (!reason.value.trim() || reason.invalid)) { <small id="cancel-reason-help" class="field-error">Escribe un motivo de hasta 500 caracteres.</small> } }
+@if (confirmation() === 'status') { <p class="muted">{{ selected()?.['activo'] ? 'El registro dejará de estar disponible para nuevas operaciones. Su historial se conservará y podrás activarlo de nuevo.' : 'El registro volverá a estar disponible para nuevas operaciones.' }}</p> }
+@if (confirmation() === 'delete') { <p class="muted">Esta acción es permanente. Los registros con historial asociado no se pueden eliminar.</p> }
+</div><div modal-actions class="modal-footer"><button class="button secondary" [disabled]="saving()" (click)="closeConfirmation()">Volver</button><button class="button" [class.danger]="confirmation() !== 'status'" [class.primary]="confirmation() === 'status'" [disabled]="saving()" (click)="execute()">{{ saving() ? 'Procesando…' : 'Confirmar' }}</button></div></app-modal> }
+@if (detail()) { <app-modal title="Detalle de auditoría" [subtitle]="'Registro #' + detail()?.id" (closed)="detail.set(null)"><div class="audit-detail"><h3>Antes del cambio</h3><pre>{{ pretty(detail()?.['antes']) }}</pre><h3>Después del cambio</h3><pre>{{ pretty(detail()?.['despues']) }}</pre></div></app-modal> }

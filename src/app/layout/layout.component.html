@@ -1,0 +1,29 @@
+<div class="app-shell">
+  <a class="skip-link" href="#main-content">Saltar al contenido</a>
+  @if (mobileOpen()) { <div class="sidebar-backdrop" (click)="closeMenu()" aria-hidden="true"></div> }
+  <aside #sidebar id="main-navigation" class="sidebar" [class.mobile-open]="mobileOpen()" [attr.role]="mobileOpen() ? 'dialog' : null" [attr.aria-modal]="mobileOpen() ? 'true' : null" aria-label="Menú principal">
+    <div class="sidebar-heading">
+      <a routerLink="/inicio" class="brand" (click)="closeMenu()" aria-label="Autos, ir al inicio"><span class="brand-symbol">A<span>↗</span></span><span>Autos<span class="brand-subtitle">GESTIÓN COMERCIAL</span></span></a>
+      <button type="button" class="icon-button sidebar-close" aria-label="Cerrar menú" (click)="closeMenu()"><app-icon name="close"/></button>
+    </div>
+    <nav aria-label="Navegación principal">
+      @for (group of groups(); track group.label) {
+        <div class="nav-group">
+          <p class="nav-group-label">{{ group.label }}</p>
+          @for (link of group.items; track link.path) {
+            <a [routerLink]="link.path" routerLinkActive="active" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{exact:true}" (click)="closeMenu()"><app-icon [name]="link.icon"/><span>{{ link.label }}</span><span class="nav-dot" aria-hidden="true"></span></a>
+          }
+        </div>
+      }
+    </nav>
+    <div class="sidebar-bottom"><div class="workspace-mark"><app-icon name="box"/></div><div><strong>Todo en un solo lugar</strong><p>Ventas e inventario</p></div></div>
+  </aside>
+  <div class="workspace" [attr.inert]="mobileOpen() ? '' : null">
+    <header class="topbar">
+      <div class="topbar-start"><button #menuTrigger type="button" class="icon-button mobile-menu" aria-label="Abrir menú" aria-controls="main-navigation" [attr.aria-expanded]="mobileOpen()" (click)="openMenu()"><app-icon name="menu"/></button><div class="page-location"><span class="topbar-label">Espacio de trabajo</span><strong>{{ currentPage() }}</strong></div></div>
+      <div class="topbar-right"><span class="current-date">{{ today }}</span><div class="user-chip"><div class="avatar" aria-hidden="true">{{ auth.user()?.nombre?.charAt(0) }}</div><div><strong>{{ auth.user()?.nombre }}</strong><span>{{ role() }}</span></div></div><button class="icon-button logout-button" type="button" aria-label="Cerrar sesión" title="Cerrar sesión" (click)="logout()"><app-icon name="logout"/></button></div>
+    </header>
+    <main id="main-content" tabindex="-1" class="page-content"><router-outlet/></main><footer class="workspace-footer">AUTOS<span>Gestión de ventas e inventario</span></footer>
+  </div>
+  @if (notifications.message()) { <div class="toast" role="status"><app-icon name="check"/>{{ notifications.message() }}</div> }
+</div>

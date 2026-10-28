@@ -1,0 +1,14 @@
+:host { display: block; }
+.row-actions { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 8px; }
+.row-action { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 34px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); font-size: 11px; line-height: 18px; font-weight: 600; white-space: nowrap; transition: background .15s, border-color .15s, box-shadow .15s; }
+.row-action app-icon { width: 15px; height: 15px; }
+.row-action:hover { background: #eef3fb; border-color: #b6c6e2; }
+.row-action:active { background: #e2eaf7; }
+.action-deactivate { background: #fff9ed; color: #855615; border-color: #ebd6ad; }
+.action-deactivate:hover { background: #fff0d3; border-color: #d4b16f; }
+.action-activate { background: #f0f8f3; color: #236b50; border-color: #bdddc9; }
+.action-activate:hover { background: #dff1e6; border-color: #86bb9c; }
+.action-danger { background: #fff5f4; color: #a73434; border-color: #efceca; }
+.action-danger:hover { background: #ffe6e3; border-color: #daaaa4; }
+.row-action:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+@media (pointer: coarse) { .row-action { min-height: 44px; padding-inline: 12px; } }

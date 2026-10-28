@@ -1,0 +1,10 @@
+<dialog #dialog class="app-modal" (cancel)="cancel($event)" (click)="backdrop($event)" [attr.aria-labelledby]="headingId">
+  <div class="modal-shell">
+    <div class="modal-header">
+      <div><h2 [id]="headingId">{{ title }}</h2>@if (subtitle) { <p>{{ subtitle }}</p> }</div>
+      <button type="button" class="icon-button" aria-label="Cerrar ventana" (click)="closed.emit()"><app-icon name="close"/></button>
+    </div>
+    <div class="modal-body"><ng-content/></div>
+    <div class="modal-actions"><ng-content select="[modal-actions]"/></div>
+  </div>
+</dialog>

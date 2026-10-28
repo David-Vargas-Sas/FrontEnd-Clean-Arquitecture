@@ -1,0 +1,32 @@
+<main class="login-layout">
+  <section class="login-story" aria-label="Autos, gestión comercial">
+    <a class="brand" href="/" aria-label="Autos, inicio"><span class="brand-symbol">A<span>↗</span></span><span>Autos<span class="brand-subtitle">GESTIÓN COMERCIAL</span></span></a>
+    <div class="story-body">
+      <span class="story-tag"><span aria-hidden="true"></span> Tu operación, conectada</span>
+      <h1>Todo conectado.<br><span>Todo bajo control.</span></h1>
+      <p>Un espacio para gestionar tus ventas, cuidar el inventario y mantener a tu equipo en sintonía.</p>
+      <div class="operation-preview" aria-hidden="true"><div class="preview-heading"><span>EL RECORRIDO DE CADA VENTA</span><app-icon name="arrow"/></div><div class="operation-steps"><div><span class="step-icon"><app-icon name="box"/></span><strong>Productos</strong><small>Tu catálogo al día</small></div><span class="step-line"></span><div><span class="step-icon"><app-icon name="sale"/></span><strong>Ventas</strong><small>Cada operación cuenta</small></div><span class="step-line"></span><div><span class="step-icon"><app-icon name="inventory"/></span><strong>Inventario</strong><small>Existencias actualizadas</small></div></div></div>
+      <div class="story-assurance"><app-icon name="shield"/><span>Las herramientas que necesitas, según tu rol.</span></div>
+    </div>
+    <div class="story-footer">AUTOS / OPERACIONES<span>Más claridad. Mejores decisiones.</span></div>
+  </section>
+  <section class="login-form-side" aria-labelledby="login-heading">
+    <div class="login-form-wrap">
+      <div class="login-emblem" aria-hidden="true"><app-icon name="shield"/></div>
+      <span class="eyebrow">BIENVENIDO A AUTOS</span><h2 id="login-heading">Inicia sesión</h2><p class="muted">Tu equipo, tus ventas y tu inventario.<br>Todo en un mismo lugar.</p>
+      @if (route.snapshot.queryParamMap.get('expired')) { <p class="notice" role="status">Tu sesión terminó. Inicia sesión nuevamente.</p> }
+      @if (error()) { <div class="alert error login-alert" role="alert"><app-icon name="shield"/><div><strong>No pudimos iniciar sesión</strong><p>{{ error() }}</p></div></div> }
+      <form [formGroup]="form" (ngSubmit)="submit()" [attr.aria-busy]="loading()" novalidate>
+        <label for="email">Correo electrónico</label>
+        <input id="email" type="email" formControlName="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="nombre@empresa.com" [attr.aria-invalid]="form.controls.email.touched && form.controls.email.invalid" [attr.aria-describedby]="form.controls.email.touched && form.controls.email.invalid ? 'email-error' : null"/>
+        @if (form.controls.email.touched && form.controls.email.invalid) { <small id="email-error" class="field-error">Ingresa un correo válido.</small> }
+        <label for="password">Contraseña</label>
+        <div class="password-wrap"><input id="password" [type]="visible() ? 'text' : 'password'" formControlName="password" autocomplete="current-password" placeholder="Ingresa tu contraseña" [attr.aria-invalid]="form.controls.password.touched && form.controls.password.invalid" [attr.aria-describedby]="form.controls.password.touched && form.controls.password.invalid ? 'password-error' : null"/><button type="button" (click)="visible.set(!visible())" [attr.aria-label]="visible() ? 'Ocultar contraseña' : 'Mostrar contraseña'" [attr.aria-pressed]="visible()">{{ visible() ? 'Ocultar' : 'Mostrar' }}</button></div>
+        @if (form.controls.password.touched && form.controls.password.invalid) { <small id="password-error" class="field-error">Ingresa tu contraseña.</small> }
+        <button class="button primary login-submit" type="submit" [disabled]="loading()"><span>{{ loading() ? 'Ingresando…' : 'Ingresar' }}</span>@if (loading()) { <span class="login-loader" aria-hidden="true"></span> } @else { <app-icon name="arrow"/> }</button>
+      </form>
+      <div class="login-help"><app-icon name="users"/><div><strong>¿Es tu primera vez aquí?</strong><p>Solicita tu cuenta al administrador de tu equipo.</p></div></div>
+    </div>
+    <footer class="login-copyright">Autos · Gestión de ventas e inventario</footer>
+  </section>
+</main>

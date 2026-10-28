@@ -1,0 +1,17 @@
+<div class="table-scroll" [attr.aria-busy]="loading"><table [attr.aria-label]="caption"><thead><tr>@for (column of columns; track column.key) { <th scope="col">{{ column.label }}</th> }@if (rowActions.length) { <th scope="col" class="actions-column">Acciones</th> }</tr></thead><tbody>
+@if (loading) { <tr><td [attr.colspan]="columns.length + (rowActions.length ? 1 : 0)"><div class="table-state"><span class="spinner"></span><p>Cargando registros…</p></div></td></tr> }
+@else {
+  @for (row of data; track row.id) {
+    <tr>
+    @for (column of columns; track column.key) { <td [class.primary-cell]="column.key === 'nombre'">
+      @if (column.type === 'status') { <app-state-status [value]="row[column.key]"/> }
+      @else if (column.type === 'stock') { <span class="stock-value" [class.no-stock]="row[column.key] === 0">{{ format(row, column) }}<small> uds.</small></span> }
+      @else { {{ format(row, column) }} }
+    </td> }
+    @if (rowActions.length) { <td><app-row-actions [row]="row" [actions]="rowActions" (actionTriggered)="rowActionTriggered.emit($event)"/></td> }
+    </tr>
+  } @empty {
+    <tr><td [attr.colspan]="columns.length + (rowActions.length ? 1 : 0)"><div class="table-state"><span class="empty-icon"><app-icon [name]="icon"/></span><h3>{{ error ? 'No pudimos cargar los registros' : noDataMessage }}</h3><p>{{ error ? 'Revisa la conexión y vuelve a intentarlo.' : 'Los registros aparecerán aquí cuando estén disponibles.' }}</p></div></td></tr>
+  }
+}
+</tbody></table></div>

@@ -1,0 +1,8 @@
+<section class="data-panel">
+<div class="table-toolbar"><div class="table-caption"><app-icon [name]="icon"/><h2>{{ title }}</h2><span class="count-badge">{{ data.length }}</span></div><div class="flex items-center gap-2.5">
+<details class="relative text-[11px] text-slate-500"><summary class="cursor-pointer list-none rounded-md px-2 py-1.5 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-autos-accent">Columnas</summary><div class="absolute right-0 top-full z-20 mt-2 min-w-48 rounded-lg border border-slate-200 bg-white p-3 shadow-lg">@for (column of columns; track column.key) { <label class="m-0 flex items-center gap-2 whitespace-nowrap px-1 py-2 text-[11px] font-normal"><input class="h-3.5 w-3.5 accent-autos-accent shadow-none" type="checkbox" [checked]="selectedColumns.has(column.key)" [disabled]="selectedColumns.has(column.key) && selectedColumns.size === 1" (change)="toggleColumn(column.key)"/>{{ column.label }}</label> }</div></details>
+<button class="button subtle small" type="button" (click)="refresh.emit()" [disabled]="loading">Actualizar</button></div></div>
+<ng-content select="[table-filters]"/>
+<app-generic-table [caption]="title" [data]="data" [columns]="visibleColumns" [options]="options" [rowActions]="rowActions" [loading]="loading" [error]="error" [icon]="icon" (rowActionTriggered)="rowActionTriggered.emit($event)"/>
+<app-pagination [offset]="offset" [count]="data.length" [hasNext]="hasNext" [loading]="loading" (pageChange)="pageChange.emit($event)"/>
+</section>
