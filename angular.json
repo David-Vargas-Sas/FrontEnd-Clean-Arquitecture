@@ -70,6 +70,26 @@
             }
           },
           "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "tsconfig.spec.json",
+            "karmaConfig": "karma.conf.cjs",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "inlineStyleLanguage": "scss",
+            "include": [
+              "src/**/*.spec.ts"
+            ],
+            "codeCoverageExclude": [
+              "src/**/*.spec.ts",
+              "src/**/*.d.ts"
+            ],
+            "styles": []
+          }
         }
       }
     }
